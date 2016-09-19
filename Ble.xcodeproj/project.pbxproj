@@ -15,6 +15,7 @@
 		F91EE7011D8E93E10036FE16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F91EE6FF1D8E93E10036FE16 /* LaunchScreen.storyboard */; };
 		F91EE70C1D8E93E10036FE16 /* BleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91EE70B1D8E93E10036FE16 /* BleTests.swift */; };
 		F91EE7171D8E93E10036FE16 /* BleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91EE7161D8E93E10036FE16 /* BleUITests.swift */; };
+		F925FB5F1D8F8E9E00FA2D98 /* SimpleBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = F925FB5E1D8F8E9E00FA2D98 /* SimpleBLE.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		F91EE7121D8E93E10036FE16 /* BleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F91EE7161D8E93E10036FE16 /* BleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleUITests.swift; sourceTree = "<group>"; };
 		F91EE7181D8E93E10036FE16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F925FB5E1D8F8E9E00FA2D98 /* SimpleBLE.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleBLE.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 		F91EE6F21D8E93E10036FE16 /* Ble */ = {
 			isa = PBXGroup;
 			children = (
+				F925FB5D1D8F8E8600FA2D98 /* source */,
 				F91EE6F31D8E93E10036FE16 /* AppDelegate.swift */,
 				F91EE6F51D8E93E10036FE16 /* ViewController.swift */,
 				F91EE6F71D8E93E10036FE16 /* Main.storyboard */,
@@ -126,6 +129,14 @@
 				F91EE7181D8E93E10036FE16 /* Info.plist */,
 			);
 			path = BleUITests;
+			sourceTree = "<group>";
+		};
+		F925FB5D1D8F8E8600FA2D98 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				F925FB5E1D8F8E9E00FA2D98 /* SimpleBLE.swift */,
+			);
+			name = source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -198,6 +209,11 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = CNWDNX3S69;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					F91EE7061D8E93E10036FE16 = {
 						CreatedOnToolsVersion = 8.0;
@@ -268,6 +284,7 @@
 				F91EE6FC1D8E93E10036FE16 /* Ble.xcdatamodeld in Sources */,
 				F91EE6F61D8E93E10036FE16 /* ViewController.swift in Sources */,
 				F91EE6F41D8E93E10036FE16 /* AppDelegate.swift in Sources */,
+				F925FB5F1D8F8E9E00FA2D98 /* SimpleBLE.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,6 +535,7 @@
 				F91EE71D1D8E93E10036FE16 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F91EE71E1D8E93E10036FE16 /* Build configuration list for PBXNativeTarget "BleTests" */ = {
 			isa = XCConfigurationList;
@@ -526,6 +544,7 @@
 				F91EE7201D8E93E10036FE16 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F91EE7211D8E93E10036FE16 /* Build configuration list for PBXNativeTarget "BleUITests" */ = {
 			isa = XCConfigurationList;
@@ -534,6 +553,7 @@
 				F91EE7231D8E93E10036FE16 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
