@@ -23,38 +23,48 @@ open class SimpleBleNotify : NSObject {
     var centralManager: CBCentralManager!
     var discoveredPeripheral:CBPeripheral!
     var log:Log = Log.sharedInstance
-    var bleHandler : SBNUpdate?;
+    var clientEventHandler : SBNUpdate?;
     open static let sharedInstance = SimpleBleNotify()
 
-    open func simpleBLE(_ bleHandler : @escaping SBNUpdate) {
+    open func simpleBLE(_ clientEventHandler : @escaping SBNUpdate) {
         self.centralManager = CBCentralManager(delegate: self, queue: nil)
-        self.bleHandler = bleHandler
+        self.clientEventHandler = clientEventHandler
     }
     
     override init() {
         super.init()
     }
     
+    open func startScan() {
+        centralManager.scanForPeripherals(withServices: nil, options: nil)
+    }
+    
     open func stopScan() {
         Log.debug("scan stop")
         centralManager.stopScan()
-        self.bleHandler!(.scanTimeout(scanTime))
+        self.clientEventHandler!(.scanTimeout(scanTime))
     }
+    
+    open func connect( _ peripheral : CBPeripheral) {
+        centralManager.connect(peripheral, options: nil)
+    }
+    
     open func disconnect() {
         centralManager.cancelPeripheralConnection(discoveredPeripheral)
         discoveredPeripheral = nil
     }
 }
 
+
+
 extension SimpleBleNotify: CBPeripheralDelegate {
     
-    // サービスを発見した
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         
         Log.debug("discover service")
         
         if (error != nil) {
-            self.bleHandler!(.fail(error))
+            clientEventHandler!(.fail(error))
             return
         }
         //self.peripheral = peripheral
@@ -62,11 +72,10 @@ extension SimpleBleNotify: CBPeripheralDelegate {
         peripheral.discoverCharacteristics(nil, for: (services?[0])!)
     }
     
-    // キャラクタリスティックを発見した
     public func peripheral(_ peripheral: CBPeripheral,didDiscoverCharacteristicsFor service: CBService,error: Error?) {
         Log.debug("discover characteristics")
         if (error != nil) {
-            //print("error: \(error)")
+            clientEventHandler!(.fail(error))
             return
         }
         for characteristic in service.characteristics! {
@@ -74,47 +83,37 @@ extension SimpleBleNotify: CBPeripheralDelegate {
         }
     }
     
-    //notifyをONにする。
+    // nofity更新状態結果
     public func peripheral(_ peripheral: CBPeripheral,didUpdateNotificationStateFor characteristic: CBCharacteristic,error: Error?) {
         if error != nil {
-            //print("Notify状態更新失敗...error: \(error)")
+            Log.debug("notification error")
+            clientEventHandler!(.fail(error))
         } else {
-            //print("Notify状態更新成功！ isNotifying: \(characteristic.isNotifying)")
+            Log.debug("notification success")
+            //Log.debug("Notify状態更新成功！ isNotifying: \(characteristic.isNotifying)")
         }
     }
     
     //データ受信
     public func peripheral(_ peripheral: CBPeripheral,didUpdateValueFor characteristic: CBCharacteristic,error: Error?) {
-        
+        Log.debug("characteristic update")
         if error != nil {
-            //bleHandler!(.fail(error))
-            //print("データ更新通知エラー: \(error)")
+            clientEventHandler!(.fail(error))
             return
         }
-        self.bleHandler!(.read(characteristic))
-
-        
-//        print(type(of: characteristic))
-//        
-//        guard let data = characteristic.value else {
-//            return
-//        }
-//        if let valueString = String(data: data, encoding: String.Encoding.utf8) {
-//        }
-
+        clientEventHandler!(.read(characteristic))
     }
 }
 
 extension SimpleBleNotify: CBCentralManagerDelegate {
     
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        self.bleHandler!(.device(central))
+        clientEventHandler!(.device(central))
 
         switch(central.state) {
         case .poweredOn:            
             Timer.scheduledTimer(timeInterval: scanTime, target: self, selector: #selector(SimpleBleNotify.scanTimeout), userInfo: nil, repeats: false)
-
-            central.scanForPeripherals(withServices: nil, options: nil)
+            startScan()
             Log.debug("poweredOn")
         case .poweredOff:
             // BluetoothがOFFになっている。
@@ -141,18 +140,19 @@ extension SimpleBleNotify: CBCentralManagerDelegate {
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         Log.debug("discover peripheral")
         peripheralArray.append(peripheral as CBPeripheral)
-        central.connect(peripheralArray[0], options: nil)
+        connect(peripheral)
+        //central.connect(peripheralArray[0], options: nil)
         discoveredPeripheral = peripheralArray[0]
     }
     
     // ペリフェラルへの接続に失敗した。
     public func centralManager(central: CBCentralManager,didFailToConnectPeripheral peripheral: CBPeripheral,error: NSError) {
-        bleHandler!(.fail(error))
+        clientEventHandler!(.fail(error))
     }
     
     // ペリフェラルへの接続に成功した。
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        //print("didConnect")
+        Log.debug("did connect peripheral")
         peripheral.delegate = self
         let UUID = CBUUID(string: serviceUUID)
         peripheral.discoverServices([UUID])

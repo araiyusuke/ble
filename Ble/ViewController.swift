@@ -2,12 +2,23 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    @IBOutlet var startBtn :UIButton!
-    @IBOutlet var endBtn :UIButton!
+
+    @IBOutlet var scanSwitch : UISwitch!
     @IBOutlet weak var textView: UITextView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        scanSwitch.isOn = false
+        scanSwitch.addTarget(self, action: #selector(ViewController.onScanTriger), for:.valueChanged)
+    }
+    
+    func onScanTriger(sender: UISwitch){
+        
+        if sender.isOn {
+            start()
+        } else {
+            stop()
+        }
     }
     
     func appendLog( _ message :String) {
@@ -25,7 +36,7 @@ class ViewController: UIViewController {
         return formatter.string(from: now as Date)
     }
     
-    @IBAction func startBtnTapped(sender : AnyObject) {
+    func start() {
         
         SimpleBleNotify.sharedInstance.scanTime = 7;
         SimpleBleNotify.sharedInstance.serviceUUID = "C1D0F554-A142-4B56-B02D-2BC23DA2DF50"
@@ -40,23 +51,43 @@ class ViewController: UIViewController {
                 self.appendLog(state.description)
                 
             case let .scanTimeout(time):
-                print(time)
+                
+                self.alert(title : "Announce",
+                           message: "Scan stop ( time :  \(time) )")
                 
             case let .read(characteristic):
                 let timeStamp = self.timeStamp()
                 self.appendLog(timeStamp + "characteristic UUID: \(characteristic.uuid), value: \(characteristic.value)")
-                
+            
             case let .fail(error):
                 self.appendLog(error!.localizedDescription)
+            
             default:
                 break
             }
         }
     }
     
-    @IBAction func endBtnTapped(sender : AnyObject) {
+    func stop() {
         SimpleBleNotify.sharedInstance.disconnect()
         clearLog()
+    }
+    
+    func alert(title:String, message:String) {
+        let alert: UIAlertController = UIAlertController(title: title, message: message, preferredStyle:  UIAlertControllerStyle.alert)
+        
+        let defaultAction: UIAlertAction = UIAlertAction(title: "reScan", style: UIAlertActionStyle.default, handler:{
+            (action: UIAlertAction!) -> Void in
+            print("reScan")
+        })
+        let cancelAction: UIAlertAction = UIAlertAction(title: "end", style: UIAlertActionStyle.cancel, handler:{
+            (action: UIAlertAction!) -> Void in
+            print("finish")
+        })
+        
+        alert.addAction(cancelAction)
+        alert.addAction(defaultAction)
+        present(alert, animated: true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
