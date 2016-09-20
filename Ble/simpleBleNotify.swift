@@ -6,11 +6,11 @@ public enum WAILocationResponse {
     case read(CBCharacteristic)
     case locationFail(NSError)
     case unauthorized
+    case scanTimeout(Double)
     case device(CBCentralManager)
 }
 
 public var peripheralArray = [CBPeripheral]()
-
 
 public typealias WAILocationUpdate = (_ response : WAILocationResponse) -> Void
 
@@ -22,34 +22,44 @@ open class SimpleBleNotify : NSObject {
     open var peripheralUUID : String!
     open var characteristicUUID : String!
     var centralManager: CBCentralManager!
+    var discoveredPeripheral:CBPeripheral!
     var log:Log = Log.sharedInstance
     var locationUpdateHandler : WAILocationUpdate?;
     open static let sharedInstance = SimpleBleNotify()
 
     open func simpleBLE(_ locationHandler : @escaping WAILocationUpdate) {
-        //locationHandler(.unauthorized)
+        self.centralManager = CBCentralManager(delegate: self, queue: nil)
         locationUpdateHandler = locationHandler
     }
     
     override init() {
         super.init()
-        self.centralManager = CBCentralManager(delegate: self, queue: nil)
+        print("init")
+        //self.centralManager = CBCentralManager(delegate: self, queue: nil)
     }
     
     open func stopScan() {
         Log.debug("scan stop")
         centralManager.stopScan()
+        self.locationUpdateHandler!(.scanTimeout(scanTime))
+    }
+    open func disconnect() {
+        centralManager.cancelPeripheralConnection(discoveredPeripheral)
+        discoveredPeripheral = nil
     }
 }
 
 extension SimpleBleNotify: CBPeripheralDelegate {
     
     // サービスを発見した
-    public func peripheral(_ peripheral: CBPeripheral!, didDiscoverServices error: Error!) {
+    public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        Log.debug("discover service")
         if (error != nil) {
             return
         }
+        //self.peripheral = peripheral
         let services = peripheral.services  as [CBService]!
+        print(services!.count)
         peripheral.discoverCharacteristics(nil, for: (services?[0])!)
         
         //print("Found \(services?.count) services! :\(services)")
@@ -70,7 +80,7 @@ extension SimpleBleNotify: CBPeripheralDelegate {
     
     //notifyをONにする。
     public func peripheral(_ peripheral: CBPeripheral,didUpdateNotificationStateFor characteristic: CBCharacteristic,error: Error?) {
-        if let error = error {
+        if error != nil {
             //print("Notify状態更新失敗...error: \(error)")
         } else {
             //print("Notify状態更新成功！ isNotifying: \(characteristic.isNotifying)")
@@ -79,7 +89,7 @@ extension SimpleBleNotify: CBPeripheralDelegate {
     
     //データ受信
     public func peripheral(_ peripheral: CBPeripheral,didUpdateValueFor characteristic: CBCharacteristic,error: Error?) {
-        if let error = error {
+        if error != nil {
             //print("データ更新通知エラー: \(error)")
             return
         }
@@ -128,19 +138,14 @@ extension SimpleBleNotify: CBCentralManagerDelegate {
     @objc private func scanTimeout() {
         print("scanTimeout")
         stopScan()
+
     }
     
-    
-    // ペリフェラル発見
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-//        print("didDiscover")
-//        print("name: \(peripheral.name)")
-//        print("UUID: \(peripheral.identifier.uuid)")
-//        print("advertisementData: \(advertisementData)")
-//        print("RSSI: \(RSSI)")
+        Log.debug("discover peripheral")
         peripheralArray.append(peripheral as CBPeripheral)
-        // ペリフェラルへ接続を試みる。
         central.connect(peripheralArray[0], options: nil)
+        discoveredPeripheral = peripheralArray[0]
     }
     
     // ペリフェラルへの接続に失敗した。
