@@ -15,7 +15,8 @@
 		F91EE7011D8E93E10036FE16 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F91EE6FF1D8E93E10036FE16 /* LaunchScreen.storyboard */; };
 		F91EE70C1D8E93E10036FE16 /* BleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91EE70B1D8E93E10036FE16 /* BleTests.swift */; };
 		F91EE7171D8E93E10036FE16 /* BleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91EE7161D8E93E10036FE16 /* BleUITests.swift */; };
-		F925FB5F1D8F8E9E00FA2D98 /* SimpleBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = F925FB5E1D8F8E9E00FA2D98 /* SimpleBLE.swift */; };
+		F925FB5F1D8F8E9E00FA2D98 /* simpleBleNotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = F925FB5E1D8F8E9E00FA2D98 /* simpleBleNotify.swift */; };
+		F9894B4B1D90D0110032AE12 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9894B4A1D90D0110032AE12 /* Log.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +51,8 @@
 		F91EE7121D8E93E10036FE16 /* BleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F91EE7161D8E93E10036FE16 /* BleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleUITests.swift; sourceTree = "<group>"; };
 		F91EE7181D8E93E10036FE16 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F925FB5E1D8F8E9E00FA2D98 /* SimpleBLE.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleBLE.swift; sourceTree = "<group>"; };
+		F925FB5E1D8F8E9E00FA2D98 /* simpleBleNotify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = simpleBleNotify.swift; sourceTree = "<group>"; };
+		F9894B4A1D90D0110032AE12 /* Log.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,9 +136,18 @@
 		F925FB5D1D8F8E8600FA2D98 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				F925FB5E1D8F8E9E00FA2D98 /* SimpleBLE.swift */,
+				F9894B491D90CFFF0032AE12 /* Log */,
+				F925FB5E1D8F8E9E00FA2D98 /* simpleBleNotify.swift */,
 			);
 			name = source;
+			sourceTree = "<group>";
+		};
+		F9894B491D90CFFF0032AE12 /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				F9894B4A1D90D0110032AE12 /* Log.swift */,
+			);
+			name = Log;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -283,8 +294,9 @@
 			files = (
 				F91EE6FC1D8E93E10036FE16 /* Ble.xcdatamodeld in Sources */,
 				F91EE6F61D8E93E10036FE16 /* ViewController.swift in Sources */,
+				F9894B4B1D90D0110032AE12 /* Log.swift in Sources */,
 				F91EE6F41D8E93E10036FE16 /* AppDelegate.swift in Sources */,
-				F925FB5F1D8F8E9E00FA2D98 /* SimpleBLE.swift in Sources */,
+				F925FB5F1D8F8E9E00FA2D98 /* simpleBleNotify.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

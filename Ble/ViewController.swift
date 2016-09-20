@@ -14,8 +14,20 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        simpleBLE { response in
-            print("hoge")
+        SimpleBleNotify.sharedInstance.scanTime = 7;
+        SimpleBleNotify.sharedInstance.serviceUUID = "C1D0F554-A142-4B56-B02D-2BC23DA2DF50"
+        SimpleBleNotify.sharedInstance.peripheralUUID = ""
+        SimpleBleNotify.sharedInstance.characteristicUUID = ""
+        
+        simpleBleNotify { response in
+            switch response {
+            case let .device(state):
+                print(state)
+            case let .read(characteristic):
+                print("characteristic UUID: \(characteristic.uuid), value: \(characteristic.value)")
+            default:
+                break
+            }
         }
         
         
