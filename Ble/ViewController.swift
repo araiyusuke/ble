@@ -14,7 +14,7 @@ class ViewController: UIViewController {
         textView.text = message + "\n\n" + textView.text
     }
     
-    func logClear() {
+    func clearLog() {
         textView.text = ""
     }
     
@@ -46,6 +46,8 @@ class ViewController: UIViewController {
                 let timeStamp = self.timeStamp()
                 self.appendLog(timeStamp + "characteristic UUID: \(characteristic.uuid), value: \(characteristic.value)")
                 
+            case let .fail(error):
+                self.appendLog(error!.localizedDescription)
             default:
                 break
             }
@@ -54,7 +56,7 @@ class ViewController: UIViewController {
     
     @IBAction func endBtnTapped(sender : AnyObject) {
         SimpleBleNotify.sharedInstance.disconnect()
-        logClear()
+        clearLog()
     }
     
     override func didReceiveMemoryWarning() {
